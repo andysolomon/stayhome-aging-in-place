@@ -1,5 +1,12 @@
-import { defineSchema } from "convex/server";
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
 
 export default defineSchema({
-  // Tables will be added per-issue as features are built
+  users: defineTable({
+    tokenIdentifier: v.string(),
+    role: v.union(v.literal("family"), v.literal("admin")),
+    displayName: v.string(),
+    email: v.string(),
+    imageUrl: v.optional(v.string()),
+  }).index("by_tokenIdentifier", ["tokenIdentifier"]),
 });
