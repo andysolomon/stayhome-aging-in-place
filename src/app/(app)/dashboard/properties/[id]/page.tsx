@@ -28,8 +28,10 @@ export default function PropertyDetailPage() {
 
   const property = useQuery(api.properties.get, { propertyId });
   const rooms = useQuery(api.rooms.listByProperty, { propertyId });
+  const assessments = useQuery(api.assessments.listByProperty, { propertyId });
   const removeRoom = useMutation(api.rooms.remove);
   const removeProperty = useMutation(api.properties.remove);
+  const createAssessment = useMutation(api.assessments.create);
 
   const [addingRoom, setAddingRoom] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
@@ -133,6 +135,66 @@ export default function PropertyDetailPage() {
                   >
                     Remove
                   </button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Assessments */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Assessments</h2>
+            <Button
+              size="sm"
+              onClick={async () => {
+                const id = await createAssessment({ propertyId });
+                router.push(`/dashboard/assessments/${id}`);
+              }}
+            >
+              Start Assessment
+            </Button>
+          </div>
+
+          <div className="mt-4 space-y-2">
+            {assessments?.length === 0 && (
+              <p className="text-sm text-zinc-500">No assessments yet.</p>
+            )}
+
+            {assessments?.map((a) => (
+              <Card
+                key={a._id}
+                className="cursor-pointer hover:border-zinc-600"
+                onClick={() =>
+                  router.push(
+                    a.status === "complete"
+                      ? `/dashboard/assessments/${a._id}/report`
+                      : `/dashboard/assessments/${a._id}`
+                  )
+                }
+              >
+                <CardContent className="flex items-center justify-between py-3">
+                  <div>
+                    <p className="text-sm font-medium capitalize">{a.status}</p>
+                    {a.performedAt && (
+                      <p className="text-xs text-zinc-500">
+                        {new Date(a.performedAt).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+                  {a.overallScore !== undefined && (
+                    <Badge
+                      className={
+                        a.overallScore < 30
+                          ? "bg-green-900 text-green-200"
+                          : a.overallScore < 60
+                            ? "bg-yellow-900 text-yellow-200"
+                            : "bg-red-900 text-red-200"
+                      }
+                    >
+                      Score: {a.overallScore}
+                    </Badge>
+                  )}
                 </CardContent>
               </Card>
             ))}
