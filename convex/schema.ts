@@ -45,4 +45,34 @@ export default defineSchema({
     customName: v.optional(v.string()),
     floorLevel: v.optional(v.number()),
   }).index("by_propertyId", ["propertyId"]),
+
+  assessments: defineTable({
+    propertyId: v.id("properties"),
+    status: v.union(v.literal("draft"), v.literal("complete")),
+    overallScore: v.optional(v.number()),
+    performedAt: v.optional(v.number()),
+    shareToken: v.optional(v.string()),
+  })
+    .index("by_propertyId", ["propertyId"])
+    .index("by_shareToken", ["shareToken"]),
+
+  assessment_hazards: defineTable({
+    assessmentId: v.id("assessments"),
+    roomId: v.id("rooms"),
+    hazardItemId: v.string(),
+    severity: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    note: v.optional(v.string()),
+    source: v.union(v.literal("manual"), v.literal("ai")),
+    aiConfidence: v.optional(v.number()),
+  })
+    .index("by_assessmentId", ["assessmentId"])
+    .index("by_assessmentId_and_roomId", ["assessmentId", "roomId"]),
+
+  assessment_photos: defineTable({
+    assessmentId: v.id("assessments"),
+    roomId: v.id("rooms"),
+    storageId: v.id("_storage"),
+  })
+    .index("by_assessmentId", ["assessmentId"])
+    .index("by_assessmentId_and_roomId", ["assessmentId", "roomId"]),
 });

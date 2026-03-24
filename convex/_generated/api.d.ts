@@ -8,8 +8,13 @@
  * @module
  */
 
+import type * as assessmentHazards from "../assessmentHazards.js";
+import type * as assessmentPhotos from "../assessmentPhotos.js";
+import type * as assessments from "../assessments.js";
 import type * as health from "../health.js";
 import type * as lib_auth from "../lib/auth.js";
+import type * as lib_hazardTaxonomy from "../lib/hazardTaxonomy.js";
+import type * as lib_riskScoring from "../lib/riskScoring.js";
 import type * as properties from "../properties.js";
 import type * as rooms from "../rooms.js";
 import type * as users from "../users.js";
@@ -21,8 +26,13 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  assessmentHazards: typeof assessmentHazards;
+  assessmentPhotos: typeof assessmentPhotos;
+  assessments: typeof assessments;
   health: typeof health;
   "lib/auth": typeof lib_auth;
+  "lib/hazardTaxonomy": typeof lib_hazardTaxonomy;
+  "lib/riskScoring": typeof lib_riskScoring;
   properties: typeof properties;
   rooms: typeof rooms;
   users: typeof users;
