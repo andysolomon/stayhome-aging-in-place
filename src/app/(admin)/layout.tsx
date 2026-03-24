@@ -5,6 +5,7 @@ import { api } from "../../../convex/_generated/api";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useStoreUserEffect } from "@/hooks/useStoreUserEffect";
+import { AdminSidebar } from "@/components/admin-sidebar";
 
 export default function AdminLayout({
   children,
@@ -16,16 +17,19 @@ export default function AdminLayout({
   const router = useRouter();
 
   useEffect(() => {
-    // role is undefined while loading, null if unauthenticated, or a string
     if (role !== undefined && role !== "admin") {
       router.replace("/dashboard");
     }
   }, [role, router]);
 
-  // Show nothing while checking role
   if (role === undefined || role !== "admin") {
     return null;
   }
 
-  return <>{children}</>;
+  return (
+    <div className="flex h-screen bg-zinc-950">
+      <AdminSidebar />
+      <main className="flex-1 overflow-y-auto">{children}</main>
+    </div>
+  );
 }

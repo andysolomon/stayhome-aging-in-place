@@ -1,6 +1,5 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import Link from "next/link";
@@ -11,12 +10,7 @@ export default function DashboardPage() {
   const properties = useQuery(api.properties.listMine);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-white">
-      <header className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
-        <h1 className="text-lg font-semibold tracking-tight">Dashboard</h1>
-        <UserButton />
-      </header>
-
+    <div className="text-white">
       <div className="mx-auto max-w-3xl px-6 py-8">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">My Properties</h2>
@@ -45,24 +39,26 @@ export default function DashboardPage() {
           )}
 
           {properties?.map((property) => (
-            <Card key={property._id}>
-              <CardHeader>
-                <CardTitle className="text-base">
-                  {property.address}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-zinc-400">
-                  {property.city}, {property.state} {property.zip}
-                </p>
-                <p className="mt-1 text-xs text-zinc-500 capitalize">
-                  {property.dwellingType.replace("_", " ")}
-                </p>
-              </CardContent>
-            </Card>
+            <Link key={property._id} href={`/dashboard/properties/${property._id}`}>
+              <Card className="cursor-pointer transition-colors hover:border-zinc-600">
+                <CardHeader>
+                  <CardTitle className="text-base">
+                    {property.address}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-zinc-400">
+                    {property.city}, {property.state} {property.zip}
+                  </p>
+                  <p className="mt-1 text-xs text-zinc-500 capitalize">
+                    {property.dwellingType.replace("_", " ")}
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
