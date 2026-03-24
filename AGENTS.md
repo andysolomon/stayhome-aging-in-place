@@ -11,3 +11,34 @@ When working on Convex code, **always read `convex/_generated/ai/guidelines.md` 
 
 Convex agent skills for common tasks can be installed by running `npx convex ai-files install`.
 <!-- convex-ai-end -->
+
+<!-- BEGIN:arc-skills-policy -->
+## ARC Skills Policy
+
+Use these ARC skills when the task matches their scope. If a skill name is explicitly provided by the user, run that skill first.
+
+### Available ARC Skills
+- `arc-contract-review`
+- `arc-creating-user-stories`
+- `arc-defining-work`
+- `arc-ideabrowser-openclaw-flow`
+- `arc-implementation-plan-progress`
+- `arc-planning-github-issues`
+- `arc-planning-work`
+- `arc-prd-to-issues`
+- `arc-project-deploy-portfolio-sync`
+
+### Trigger Rules
+- IdeaBrowser-origin projects: run `arc-ideabrowser-openclaw-flow` first, then `arc-implementation-plan-progress`.
+- When asked for plans/roadmaps/progress updates: run `arc-implementation-plan-progress`.
+- When converting product intent to execution artifacts:
+  - PRD to issues: `arc-prd-to-issues`
+  - planning work or issue breakdown: `arc-planning-work`, `arc-planning-github-issues`, `arc-defining-work`, `arc-creating-user-stories`
+- Contract/compliance review tasks: `arc-contract-review`.
+- Deploy + portfolio sync requests: `arc-project-deploy-portfolio-sync`.
+
+### Execution Defaults
+- Prefer Bun for install/run commands.
+- Do not push, merge, or deploy unless explicitly requested by the user.
+- Keep `IMPLEMENTATION_PLAN.md` and `progress.txt` synchronized whenever scope changes.
+<!-- END:arc-skills-policy -->
