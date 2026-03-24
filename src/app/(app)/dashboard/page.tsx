@@ -8,18 +8,52 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function DashboardPage() {
   const properties = useQuery(api.properties.listMine);
+  const propertyCount = properties?.length ?? 0;
 
   return (
     <div className="text-white">
       <div className="mx-auto max-w-3xl px-6 py-8">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">My Properties</h2>
+        <h1 className="text-2xl font-semibold">Dashboard</h1>
+
+        {/* Summary cards */}
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <Card>
+            <CardContent className="py-4">
+              <p className="text-sm text-zinc-400">Properties</p>
+              <p className="mt-1 text-2xl font-bold">{propertyCount}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="py-4">
+              <p className="text-sm text-zinc-400">Assessments</p>
+              <p className="mt-1 text-2xl font-bold">0</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="py-4">
+              <p className="text-sm text-zinc-400">Plan</p>
+              <p className="mt-1 text-lg font-semibold">Free</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick actions */}
+        <div className="mt-6 flex gap-3">
           <Link href="/dashboard/properties/new">
             <Button>Add Property</Button>
           </Link>
+          <Button variant="outline" disabled>
+            Start Assessment
+          </Button>
+          <Button variant="outline" disabled>
+            View Reports
+          </Button>
         </div>
 
-        <div className="mt-6 space-y-4">
+        {/* Property list */}
+        <h2 className="mt-10 text-lg font-semibold">My Properties</h2>
+
+        <div className="mt-4 space-y-3">
           {properties === undefined && (
             <p className="text-zinc-500">Loading...</p>
           )}
@@ -28,8 +62,8 @@ export default function DashboardPage() {
             <Card>
               <CardContent className="py-12 text-center">
                 <p className="text-zinc-400">
-                  No properties yet. Add your first property to get started with
-                  a safety assessment.
+                  No properties yet. Add your first property to get started
+                  with a safety assessment.
                 </p>
                 <Link href="/dashboard/properties/new">
                   <Button className="mt-4">Add Your First Property</Button>
@@ -39,7 +73,10 @@ export default function DashboardPage() {
           )}
 
           {properties?.map((property) => (
-            <Link key={property._id} href={`/dashboard/properties/${property._id}`}>
+            <Link
+              key={property._id}
+              href={`/dashboard/properties/${property._id}`}
+            >
               <Card className="cursor-pointer transition-colors hover:border-zinc-600">
                 <CardHeader>
                   <CardTitle className="text-base">
