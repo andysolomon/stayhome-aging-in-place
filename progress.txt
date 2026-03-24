@@ -1,29 +1,54 @@
 [ ] Phase 1 - Foundation
-[ ] 1.1 Define roles and access model (family, assessor, contractor, admin)
-[ ] 1.2 Implement property profile data model + onboarding shell
-[ ] 1.3 Ship authenticated app shell routes
+[ ] #1  [W-000001] Set up Supabase project, client helpers, and env config (P0, M)
+[ ] #2  [W-000002] Implement email/password signup and login pages (P0, L)
+[ ] #3  [W-000003] Create user profiles table with role column (P0, M)
+[ ] #4  [W-000004] Build auth middleware and route protection (P0, M)
+[ ] #5  [W-000005] Create properties and rooms tables with migrations (P0, M)
+[ ] #6  [W-000006] Build property onboarding wizard UI (P0, L)
+[ ] #7  [W-000007] Build property detail and room list page (P1, M)
+[ ] #8  [W-000008] Build authenticated app shell layout with sidebar nav (P0, M)
+[ ] #9  [W-000009] Build dashboard home page with empty-state cards (P1, S)
+[ ] #10 [W-000010] Build admin layout shell and admin dashboard (P1, M)
+[ ] #11 [W-000011] Set up global error boundary and not-found pages (P1, S)
 
 [ ] Phase 2 - Assessment Engine
-[ ] 2.1 Define hazard checklist and risk scoring rubric
-[ ] 2.2 Implement media capture/upload flow for assessments
-[ ] 2.3 Generate safety recommendation report output
+[ ] #12 [W-000012] Define hazard taxonomy seed data and DB tables (P0, M)
+[ ] #13 [W-000013] Build room-based checklist UI for manual hazard entry (P0, M)
+[ ] #14 [W-000014] Set up Supabase Storage bucket and photo upload component (P0, M)
+[ ] #15 [W-000015] Integrate AI vision model for real-time hazard detection (P0, XL)
+[ ] #16 [W-000016] Build assessment creation flow (rooms, photos, hazards) (P0, L)
+[ ] #17 [W-000017] Generate risk score from assessment hazards (P0, M)
+[ ] #18 [W-000018] Build in-app assessment report view (P0, M)
+[ ] #19 [W-000019] Generate downloadable PDF report (P1, L)
+[ ] #20 [W-000020] Create shareable report link (no auth required) (P1, M)
+[ ] #21 [W-000021] Admin assessment review queue (P1, M)
 
 [ ] Phase 3 - Contractor Matching
-[ ] 3.1 Create contractor profile schema and trust signals
-[ ] 3.2 Implement contractor matching + referral flow
-[ ] 3.3 Add quote/status tracking for active jobs
+[ ] #22 [W-000022] Create contractors table and admin CRUD pages (P0, L)
+[ ] #23 [W-000023] Build public contractor directory with search and filters (P1, M)
+[ ] #24 [W-000024] Implement contractor matching algorithm (P0, M)
+[ ] #25 [W-000025] Build quote request flow with status tracking (P0, L)
+[ ] #26 [W-000026] Gate contractor matching behind subscription tier (P1, M)
+[ ] #27 [W-000027] Admin contractor analytics (P2, S)
 
 [ ] Phase 4 - Monitoring and Continuity
-[ ] 4.1 Add subscription tiers and entitlement checks
-[ ] 4.2 Implement recurring reminders and check-in workflows
-[ ] 4.3 Build property safety timeline and change history
+[ ] #28 [W-000028] Integrate Stripe Checkout and subscription management (P0, XL)
+[ ] #29 [W-000029] Build subscription tier selection UI and entitlement enforcement (P0, M)
+[ ] #30 [W-000030] Implement scheduled re-assessment reminders (P0, M)
+[ ] #31 [W-000031] Build periodic maintenance checklists (P1, M)
+[ ] #32 [W-000032] Build property safety timeline (P1, L)
+[ ] #33 [W-000033] Admin subscription management view (P1, S)
 
 [ ] Phase 5 - B2B Workflows
-[ ] 5.1 Implement partner referral intake workflow
-[ ] 5.2 Add exportable report formats for external stakeholders
-[ ] 5.3 Build admin analytics views
+[ ] #34 [W-000034] Design and implement partner API key management (P0, M)
+[ ] #35 [W-000035] Build referral intake API endpoint (P0, L)
+[ ] #36 [W-000036] Build admin referral queue and partner management (P1, M)
+[ ] #37 [W-000037] Add exportable report formats (CSV, JSON) for partners (P1, M)
+[ ] #38 [W-000038] Build admin operational analytics dashboard (P1, L)
 
 [ ] Phase 6 - Hardening and Launch
-[ ] 6.1 Add robust validation and error handling
-[ ] 6.2 Expand test coverage and regression checks
-[ ] 6.3 Final deployment and operational runbook
+[ ] #39 [W-000039] Add form validation and error handling across all flows (P0, M)
+[ ] #40 [W-000040] Write unit and integration tests for core flows (P0, L)
+[ ] #41 [W-000041] Add end-to-end tests for critical paths (P1, M)
+[ ] #42 [W-000042] Performance audit and optimization (P1, M)
+[ ] #43 [W-000043] Create deployment runbook and production checklist (P1, S)
