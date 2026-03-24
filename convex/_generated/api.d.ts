@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as ai_analyzePhoto from "../ai/analyzePhoto.js";
 import type * as assessmentHazards from "../assessmentHazards.js";
 import type * as assessmentPhotos from "../assessmentPhotos.js";
 import type * as assessments from "../assessments.js";
@@ -26,6 +27,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "ai/analyzePhoto": typeof ai_analyzePhoto;
   assessmentHazards: typeof assessmentHazards;
   assessmentPhotos: typeof assessmentPhotos;
   assessments: typeof assessments;
