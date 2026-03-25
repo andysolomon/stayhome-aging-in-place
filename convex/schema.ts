@@ -106,4 +106,35 @@ export default defineSchema({
     .index("by_requesterId", ["requesterId"])
     .index("by_contractorId", ["contractorId"])
     .index("by_assessmentId", ["assessmentId"]),
+
+  subscriptions: defineTable({
+    userId: v.id("users"),
+    stripeCustomerId: v.string(),
+    stripeSubscriptionId: v.optional(v.string()),
+    plan: v.union(v.literal("free"), v.literal("monitoring"), v.literal("premium")),
+    status: v.union(v.literal("active"), v.literal("canceled"), v.literal("past_due")),
+    currentPeriodEnd: v.optional(v.number()),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_stripeCustomerId", ["stripeCustomerId"]),
+
+  assessment_reminders: defineTable({
+    propertyId: v.id("properties"),
+    userId: v.id("users"),
+    intervalMonths: v.number(),
+    nextDueAt: v.number(),
+  }).index("by_userId", ["userId"]),
+
+  maintenance_checklists: defineTable({
+    propertyId: v.id("properties"),
+    userId: v.id("users"),
+    month: v.string(),
+    items: v.array(v.object({
+      id: v.string(),
+      label: v.string(),
+      completed: v.boolean(),
+    })),
+  })
+    .index("by_userId_and_month", ["userId", "month"])
+    .index("by_propertyId", ["propertyId"]),
 });
