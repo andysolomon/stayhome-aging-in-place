@@ -132,3 +132,34 @@ export const revokeShareToken = mutation({
     await ctx.db.patch(args.assessmentId, { shareToken: undefined });
   },
 });
+
+// Admin queries
+
+export const listAll = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getAuthenticatedUser(ctx);
+    if (user.role !== "admin") {
+      throw new Error("Admin access required");
+    }
+
+    return await ctx.db.query("assessments").order("desc").take(100);
+  },
+});
+
+export const toggleFlag = mutation({
+  args: { assessmentId: v.id("assessments") },
+  handler: async (ctx, args) => {
+    const user = await getAuthenticatedUser(ctx);
+    if (user.role !== "admin") {
+      throw new Error("Admin access required");
+    }
+
+    const assessment = await ctx.db.get(args.assessmentId);
+    if (!assessment) throw new Error("Assessment not found");
+
+    await ctx.db.patch(args.assessmentId, {
+      flaggedForReview: !assessment.flaggedForReview,
+    });
+  },
+});

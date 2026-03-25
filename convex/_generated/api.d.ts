@@ -9,10 +9,12 @@
  */
 
 import type * as ai_analyzePhoto from "../ai/analyzePhoto.js";
+import type * as ai_generatePdf from "../ai/generatePdf.js";
 import type * as assessmentHazards from "../assessmentHazards.js";
 import type * as assessmentPhotos from "../assessmentPhotos.js";
 import type * as assessments from "../assessments.js";
 import type * as health from "../health.js";
+import type * as http from "../http.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_hazardTaxonomy from "../lib/hazardTaxonomy.js";
 import type * as lib_riskScoring from "../lib/riskScoring.js";
@@ -28,10 +30,12 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   "ai/analyzePhoto": typeof ai_analyzePhoto;
+  "ai/generatePdf": typeof ai_generatePdf;
   assessmentHazards: typeof assessmentHazards;
   assessmentPhotos: typeof assessmentPhotos;
   assessments: typeof assessments;
   health: typeof health;
+  http: typeof http;
   "lib/auth": typeof lib_auth;
   "lib/hazardTaxonomy": typeof lib_hazardTaxonomy;
   "lib/riskScoring": typeof lib_riskScoring;

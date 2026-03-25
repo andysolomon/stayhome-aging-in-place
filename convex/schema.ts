@@ -52,6 +52,7 @@ export default defineSchema({
     overallScore: v.optional(v.number()),
     performedAt: v.optional(v.number()),
     shareToken: v.optional(v.string()),
+    flaggedForReview: v.optional(v.boolean()),
   })
     .index("by_propertyId", ["propertyId"])
     .index("by_shareToken", ["shareToken"]),
