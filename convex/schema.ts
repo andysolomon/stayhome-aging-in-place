@@ -25,6 +25,7 @@ export default defineSchema({
   users: defineTable({
     tokenIdentifier: v.string(),
     role: v.union(v.literal("family"), v.literal("admin")),
+    plan: v.optional(v.union(v.literal("free"), v.literal("monitoring"), v.literal("premium"))),
     displayName: v.string(),
     email: v.string(),
     imageUrl: v.optional(v.string()),
@@ -76,4 +77,33 @@ export default defineSchema({
   })
     .index("by_assessmentId", ["assessmentId"])
     .index("by_assessmentId_and_roomId", ["assessmentId", "roomId"]),
+
+  contractors: defineTable({
+    businessName: v.string(),
+    contactEmail: v.string(),
+    phone: v.string(),
+    serviceAreaZips: v.array(v.string()),
+    hazardSpecialties: v.array(v.string()),
+    verified: v.boolean(),
+    active: v.boolean(),
+    rating: v.number(),
+    bio: v.optional(v.string()),
+  }).index("by_verified_and_active", ["verified", "active"]),
+
+  quote_requests: defineTable({
+    assessmentId: v.id("assessments"),
+    contractorId: v.id("contractors"),
+    requesterId: v.id("users"),
+    status: v.union(
+      v.literal("requested"),
+      v.literal("quoted"),
+      v.literal("accepted"),
+      v.literal("declined")
+    ),
+    message: v.optional(v.string()),
+    amount: v.optional(v.number()),
+  })
+    .index("by_requesterId", ["requesterId"])
+    .index("by_contractorId", ["contractorId"])
+    .index("by_assessmentId", ["assessmentId"]),
 });

@@ -11,6 +11,8 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: "grid" },
   { href: "/dashboard/properties", label: "Properties", icon: "home" },
   { href: "/dashboard/assessments", label: "Assessments", icon: "clipboard" },
+  { href: "/dashboard/contractors", label: "Contractors", icon: "user" },
+  { href: "/dashboard/quotes", label: "Quotes", icon: "clipboard" },
   { href: "/dashboard/account", label: "Account", icon: "user" },
 ];
 
