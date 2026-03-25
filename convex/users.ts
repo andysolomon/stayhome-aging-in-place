@@ -37,10 +37,11 @@ export const store = mutation({
       return user._id;
     }
 
-    // Create new user with default "family" role
+    // Create new user with default "family" role and "free" plan
     return await ctx.db.insert("users", {
       tokenIdentifier: identity.tokenIdentifier,
       role: "family",
+      plan: "free",
       displayName: identity.name ?? "",
       email: identity.email ?? "",
       imageUrl: identity.pictureUrl,
