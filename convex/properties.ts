@@ -106,3 +106,22 @@ export const get = query({
     return property;
   },
 });
+
+/**
+ * Public property query for shared reports (no auth).
+ * Only returns address info, no owner details.
+ */
+export const getPublic = query({
+  args: { propertyId: v.id("properties") },
+  handler: async (ctx, args) => {
+    const property = await ctx.db.get(args.propertyId);
+    if (!property) return null;
+    return {
+      address: property.address,
+      city: property.city,
+      state: property.state,
+      zip: property.zip,
+      dwellingType: property.dwellingType,
+    };
+  },
+});

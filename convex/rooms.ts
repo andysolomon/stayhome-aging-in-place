@@ -93,3 +93,16 @@ export const listByProperty = query({
       .take(50);
   },
 });
+
+/**
+ * Public rooms query for shared reports (no auth).
+ */
+export const listByPropertyPublic = query({
+  args: { propertyId: v.id("properties") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("rooms")
+      .withIndex("by_propertyId", (q) => q.eq("propertyId", args.propertyId))
+      .take(50);
+  },
+});
