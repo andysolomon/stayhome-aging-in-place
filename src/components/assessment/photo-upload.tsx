@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useAction } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 
@@ -44,7 +45,7 @@ export function PhotoUpload({
       });
       const { storageId } = await result.json();
 
-      const photoId = await savePhoto({
+      await savePhoto({
         assessmentId,
         roomId,
         storageId,
@@ -129,10 +130,13 @@ export function PhotoUpload({
           {photos.map((photo) => (
             <div key={photo._id} className="group relative">
               {photo.url && (
-                <img
+                <Image
                   src={photo.url}
                   alt="Room photo"
+                  width={200}
+                  height={96}
                   className="h-24 w-full rounded-lg object-cover"
+                  unoptimized
                 />
               )}
               <button
