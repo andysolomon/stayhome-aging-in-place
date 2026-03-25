@@ -136,4 +136,64 @@ http.route({
   }),
 });
 
+// Partner referral API
+http.route({
+  path: "/api/v1/referrals",
+  method: "POST",
+  handler: httpAction(async (ctx, req) => {
+    const apiKey = req.headers.get("x-api-key");
+    if (!apiKey) {
+      return new Response(JSON.stringify({ error: "API key required" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const partner = await ctx.runQuery(api.partners.validateApiKey, { apiKey });
+    if (!partner) {
+      return new Response(JSON.stringify({ error: "Invalid or inactive API key" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const { patientName, patientEmail, address, city, state, zip, reason, urgency } = body;
+    if (!patientName || !address || !city || !state || !zip || !reason) {
+      return new Response(
+        JSON.stringify({ error: "Missing required fields: patientName, address, city, state, zip, reason" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    const validUrgency = ["low", "medium", "high"].includes(urgency) ? urgency : "medium";
+
+    const referralId = await ctx.runMutation(api.referrals.create, {
+      partnerId: partner._id,
+      patientName,
+      patientEmail: patientEmail ?? undefined,
+      address,
+      city,
+      state,
+      zip,
+      reason,
+      urgency: validUrgency,
+    });
+
+    return new Response(
+      JSON.stringify({ id: referralId, status: "pending" }),
+      { status: 201, headers: { "Content-Type": "application/json" } }
+    );
+  }),
+});
+
 export default http;

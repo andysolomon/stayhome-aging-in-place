@@ -137,4 +137,28 @@ export default defineSchema({
   })
     .index("by_userId_and_month", ["userId", "month"])
     .index("by_propertyId", ["propertyId"]),
+
+  partners: defineTable({
+    name: v.string(),
+    apiKeyHash: v.string(),
+    contactEmail: v.string(),
+    status: v.union(v.literal("active"), v.literal("inactive")),
+    rateLimit: v.number(),
+  }).index("by_apiKeyHash", ["apiKeyHash"]),
+
+  referrals: defineTable({
+    partnerId: v.id("partners"),
+    patientName: v.string(),
+    patientEmail: v.optional(v.string()),
+    address: v.string(),
+    city: v.string(),
+    state: v.string(),
+    zip: v.string(),
+    reason: v.string(),
+    urgency: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    status: v.union(v.literal("pending"), v.literal("accepted"), v.literal("assessed"), v.literal("closed")),
+    propertyId: v.optional(v.id("properties")),
+  })
+    .index("by_partnerId", ["partnerId"])
+    .index("by_status", ["status"]),
 });
