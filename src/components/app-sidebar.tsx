@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Logo } from "@/components/logo";
 import { UserButton } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -44,9 +45,7 @@ export function AppSidebar() {
   return (
     <aside className="flex h-full w-64 flex-col border-r border-zinc-800 bg-zinc-950">
       <div className="flex h-14 items-center border-b border-zinc-800 px-4">
-        <Link href="/dashboard" className="text-lg font-semibold tracking-tight text-white">
-          StayHome
-        </Link>
+        <Logo size="small" />
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
