@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" fill="none">
+  <!-- House accent -->
+  <path d="M4 20L16 8L28 20V32H4V20Z" stroke="white" stroke-width="2" fill="none"/>
+  <path d="M10 32V22H22V32" stroke="white" stroke-width="2" fill="none"/>
+  <!-- Wordmark -->
+  <text x="36" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="white" letter-spacing="-0.5">StayHome</text>
+</svg>
