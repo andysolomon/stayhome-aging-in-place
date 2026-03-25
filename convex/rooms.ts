@@ -1,12 +1,13 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, QueryCtx, MutationCtx } from "./_generated/server";
+import { Doc, Id } from "./_generated/dataModel";
 import { roomCategories } from "./schema";
 import { getAuthenticatedUser } from "./lib/auth";
 
 async function verifyPropertyOwnership(
-  ctx: { db: { get: (id: any) => Promise<any> } },
-  user: { _id: any },
-  propertyId: any
+  ctx: QueryCtx | MutationCtx,
+  user: Doc<"users">,
+  propertyId: Id<"properties">
 ) {
   const property = await ctx.db.get(propertyId);
   if (!property || property.ownerId !== user._id) {
@@ -53,7 +54,7 @@ export const update = mutation({
     await verifyPropertyOwnership(ctx, user, room.propertyId);
 
     const { roomId, ...updates } = args;
-    const patch: Record<string, any> = {};
+    const patch: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(updates)) {
       if (value !== undefined) {
         patch[key] = value;

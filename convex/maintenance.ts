@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query, internalMutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
 
 const MAINTENANCE_ITEMS: Record<string, Array<{ id: string; label: string }>> = {

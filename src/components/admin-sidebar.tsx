@@ -12,6 +12,8 @@ const ADMIN_NAV = [
   { href: "/admin/assessments", label: "Assessments" },
   { href: "/admin/subscriptions", label: "Subscriptions" },
   { href: "/admin/partners", label: "Partners" },
+  { href: "/admin/referrals", label: "Referrals" },
+  { href: "/admin/analytics", label: "Analytics" },
 ];
 
 export function AdminSidebar() {
