@@ -14,15 +14,20 @@ import type * as assessmentHazards from "../assessmentHazards.js";
 import type * as assessmentPhotos from "../assessmentPhotos.js";
 import type * as assessments from "../assessments.js";
 import type * as contractors from "../contractors.js";
+import type * as crons from "../crons.js";
 import type * as health from "../health.js";
 import type * as http from "../http.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_entitlements from "../lib/entitlements.js";
 import type * as lib_hazardTaxonomy from "../lib/hazardTaxonomy.js";
 import type * as lib_riskScoring from "../lib/riskScoring.js";
+import type * as maintenance from "../maintenance.js";
 import type * as properties from "../properties.js";
 import type * as quoteRequests from "../quoteRequests.js";
+import type * as reminders from "../reminders.js";
 import type * as rooms from "../rooms.js";
+import type * as stripe from "../stripe.js";
+import type * as subscriptions from "../subscriptions.js";
 import type * as users from "../users.js";
 
 import type {
@@ -38,15 +43,20 @@ declare const fullApi: ApiFromModules<{
   assessmentPhotos: typeof assessmentPhotos;
   assessments: typeof assessments;
   contractors: typeof contractors;
+  crons: typeof crons;
   health: typeof health;
   http: typeof http;
   "lib/auth": typeof lib_auth;
   "lib/entitlements": typeof lib_entitlements;
   "lib/hazardTaxonomy": typeof lib_hazardTaxonomy;
   "lib/riskScoring": typeof lib_riskScoring;
+  maintenance: typeof maintenance;
   properties: typeof properties;
   quoteRequests: typeof quoteRequests;
+  reminders: typeof reminders;
   rooms: typeof rooms;
+  stripe: typeof stripe;
+  subscriptions: typeof subscriptions;
   users: typeof users;
 }>;
 
