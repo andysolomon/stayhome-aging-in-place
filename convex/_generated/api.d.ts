@@ -21,6 +21,7 @@ import type * as lib_auth from "../lib/auth.js";
 import type * as lib_entitlements from "../lib/entitlements.js";
 import type * as lib_hazardTaxonomy from "../lib/hazardTaxonomy.js";
 import type * as lib_riskScoring from "../lib/riskScoring.js";
+import type * as lib_validators from "../lib/validators.js";
 import type * as maintenance from "../maintenance.js";
 import type * as partners from "../partners.js";
 import type * as properties from "../properties.js";
@@ -52,6 +53,7 @@ declare const fullApi: ApiFromModules<{
   "lib/entitlements": typeof lib_entitlements;
   "lib/hazardTaxonomy": typeof lib_hazardTaxonomy;
   "lib/riskScoring": typeof lib_riskScoring;
+  "lib/validators": typeof lib_validators;
   maintenance: typeof maintenance;
   partners: typeof partners;
   properties: typeof properties;

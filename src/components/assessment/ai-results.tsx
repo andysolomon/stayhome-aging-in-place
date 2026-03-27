@@ -6,6 +6,8 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getHazardItemById } from "../../../convex/lib/hazardTaxonomy";
+import { useState } from "react";
+import { toast } from "sonner";
 
 type DetectedHazard = {
   hazardItemId: string;
@@ -32,24 +34,69 @@ export function AiResults({
   onDone: () => void;
 }) {
   const addHazard = useMutation(api.assessmentHazards.add);
+  const [dismissed, setDismissed] = useState<Set<number>>(new Set());
+  const [accepted, setAccepted] = useState<Set<number>>(new Set());
 
-  async function acceptHazard(hazard: DetectedHazard) {
-    await addHazard({
-      assessmentId,
-      roomId,
-      hazardItemId: hazard.hazardItemId,
-      severity: hazard.severity,
-      note: `${hazard.locationDescription}. ${hazard.recommendation}`,
-      source: "ai",
-      aiConfidence: 0.8,
-    });
+  const visibleHazards = hazards.filter((_, i) => !dismissed.has(i) && !accepted.has(i));
+
+  async function acceptHazard(hazard: DetectedHazard, index: number) {
+    try {
+      await addHazard({
+        assessmentId,
+        roomId,
+        hazardItemId: hazard.hazardItemId,
+        severity: hazard.severity,
+        note: `${hazard.locationDescription}. ${hazard.recommendation}`,
+        source: "ai",
+        aiConfidence: 0.8,
+      });
+      setAccepted((prev) => new Set(prev).add(index));
+      const item = getHazardItemById(hazard.hazardItemId);
+      toast.success(`Added: ${item?.label ?? hazard.hazardItemId}`);
+    } catch {
+      toast.error("Failed to add hazard");
+    }
   }
 
   async function acceptAll() {
-    for (const hazard of hazards) {
-      await acceptHazard(hazard);
+    let count = 0;
+    for (let i = 0; i < hazards.length; i++) {
+      if (dismissed.has(i) || accepted.has(i)) continue;
+      try {
+        await addHazard({
+          assessmentId,
+          roomId,
+          hazardItemId: hazards[i].hazardItemId,
+          severity: hazards[i].severity,
+          note: `${hazards[i].locationDescription}. ${hazards[i].recommendation}`,
+          source: "ai",
+          aiConfidence: 0.8,
+        });
+        count++;
+      } catch {
+        // continue with remaining
+      }
     }
+    toast.success(`Added ${count} hazard${count !== 1 ? "s" : ""} to checklist`);
     onDone();
+  }
+
+  function dismissHazard(index: number) {
+    setDismissed((prev) => new Set(prev).add(index));
+  }
+
+  // Auto-dismiss when all hazards have been reviewed
+  if (visibleHazards.length === 0 && (accepted.size > 0 || dismissed.size > 0)) {
+    return (
+      <div className="rounded-lg border border-zinc-800 p-4 text-center">
+        <p className="text-sm text-zinc-400">
+          All AI suggestions reviewed — {accepted.size} accepted, {dismissed.size} dismissed.
+        </p>
+        <Button variant="outline" size="sm" className="mt-2" onClick={onDone}>
+          Continue
+        </Button>
+      </div>
+    );
   }
 
   if (hazards.length === 0) {
@@ -67,14 +114,17 @@ export function AiResults({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-semibold text-zinc-300">
-          AI Detected {hazards.length} Hazard{hazards.length !== 1 ? "s" : ""}
+          AI Detected {visibleHazards.length} Hazard{visibleHazards.length !== 1 ? "s" : ""}
         </h4>
-        <Button size="sm" onClick={acceptAll}>
-          Accept All
-        </Button>
+        {visibleHazards.length > 1 && (
+          <Button size="sm" onClick={acceptAll}>
+            Accept All
+          </Button>
+        )}
       </div>
 
       {hazards.map((hazard, i) => {
+        if (dismissed.has(i) || accepted.has(i)) return null;
         const item = getHazardItemById(hazard.hazardItemId);
         return (
           <div
@@ -99,11 +149,17 @@ export function AiResults({
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => {
-                  acceptHazard(hazard);
-                }}
+                onClick={() => acceptHazard(hazard, i)}
               >
                 Accept
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-zinc-500"
+                onClick={() => dismissHazard(i)}
+              >
+                Dismiss
               </Button>
             </div>
           </div>
