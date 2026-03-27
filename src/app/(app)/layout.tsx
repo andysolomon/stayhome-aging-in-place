@@ -3,6 +3,7 @@
 import { useStoreUserEffect } from "@/hooks/useStoreUserEffect";
 import { AppSidebar } from "@/components/app-sidebar";
 import { MobileNav } from "@/components/mobile-nav";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   useStoreUserEffect();
@@ -26,6 +27,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
+      <Toaster position="bottom-right" />
     </div>
   );
 }

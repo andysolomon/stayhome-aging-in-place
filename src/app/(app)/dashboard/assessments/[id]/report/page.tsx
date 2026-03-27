@@ -7,8 +7,21 @@ import { Id } from "../../../../../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { getHazardItemById } from "../../../../../../../convex/lib/hazardTaxonomy";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const ROOM_LABELS: Record<string, string> = {
   bathroom: "Bathroom",
@@ -26,6 +39,34 @@ const SCORE_STYLES: Record<string, string> = {
   amber: "bg-yellow-900 text-yellow-200",
   red: "bg-red-900 text-red-200",
 };
+
+const SEVERITY_BADGE: Record<string, string> = {
+  high: "bg-red-900 text-red-200",
+  medium: "bg-yellow-900 text-yellow-200",
+  low: "bg-green-900 text-green-200",
+};
+
+function ReportSkeleton() {
+  return (
+    <div className="mx-auto max-w-3xl px-6 py-8">
+      <div className="mb-6 flex gap-3">
+        <Skeleton className="h-10 w-36" />
+        <Skeleton className="h-10 w-36" />
+      </div>
+      <Skeleton className="mb-2 h-8 w-48" />
+      <Skeleton className="mb-1 h-4 w-64" />
+      <Skeleton className="mb-8 h-3 w-32" />
+      <div className="mb-8 flex justify-center">
+        <Skeleton className="h-24 w-24 rounded-full" />
+      </div>
+      <Skeleton className="mb-4 h-6 w-56" />
+      <div className="space-y-4">
+        <Skeleton className="h-32 w-full rounded-lg" />
+        <Skeleton className="h-32 w-full rounded-lg" />
+      </div>
+    </div>
+  );
+}
 
 export default function ReportPage() {
   const params = useParams();
@@ -52,11 +93,12 @@ export default function ReportPage() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
 
   if (!assessment || !property || !rooms || !hazards) {
-    return <div className="p-6 text-zinc-500">Loading report...</div>;
+    return <ReportSkeleton />;
   }
 
   const score = assessment.overallScore ?? 0;
   const scoreColor = score < 30 ? "green" : score < 60 ? "amber" : "red";
+  const scoreLabel = score < 30 ? "Low Risk" : score < 60 ? "Moderate Risk" : "High Risk";
 
   const sortedHazards = [...hazards].sort((a, b) => {
     const w: Record<string, number> = { high: 3, medium: 2, low: 1 };
@@ -67,27 +109,38 @@ export default function ReportPage() {
     setGeneratingPdf(true);
     try {
       const storageId = await generatePdf({ assessmentId });
-      // Get the download URL - we need to fetch it from storage
-      // For now, open in new tab via Convex storage URL pattern
       const url = `${process.env.NEXT_PUBLIC_CONVEX_URL?.replace(".cloud", ".site")}/getFile?storageId=${storageId}`;
       window.open(url, "_blank");
-    } catch (err) {
-      console.error("PDF generation failed:", err);
+      toast.success("PDF generated");
+    } catch {
+      toast.error("PDF generation failed", {
+        description: "Please try again in a moment.",
+      });
     } finally {
       setGeneratingPdf(false);
     }
   }
 
   async function handleShare() {
-    const token = await generateShareToken({ assessmentId });
-    const url = `${window.location.origin}/reports/${token}`;
-    setShareUrl(url);
-    await navigator.clipboard.writeText(url);
+    try {
+      const token = await generateShareToken({ assessmentId });
+      const url = `${window.location.origin}/reports/${token}`;
+      setShareUrl(url);
+      await navigator.clipboard.writeText(url);
+      toast.success("Share link copied to clipboard");
+    } catch {
+      toast.error("Failed to generate share link");
+    }
   }
 
   async function handleRevokeShare() {
-    await revokeShareToken({ assessmentId });
-    setShareUrl(null);
+    try {
+      await revokeShareToken({ assessmentId });
+      setShareUrl(null);
+      toast.success("Share link revoked");
+    } catch {
+      toast.error("Failed to revoke share link");
+    }
   }
 
   return (
@@ -98,9 +151,25 @@ export default function ReportPage() {
           {generatingPdf ? "Generating..." : "Download PDF"}
         </Button>
         {assessment.shareToken ? (
-          <Button variant="outline" onClick={handleRevokeShare}>
-            Revoke Share Link
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger>
+              <Button variant="outline">Revoke Share Link</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Revoke share link?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Anyone with the current link will lose access to this report. You can generate a new link later.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleRevokeShare}>
+                  Revoke
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         ) : (
           <Button variant="outline" onClick={handleShare}>
             Share Report
@@ -136,8 +205,7 @@ export default function ReportPage() {
           {score}
         </div>
         <p className="mt-2 text-sm text-zinc-400">
-          Risk Score (0-100) —{" "}
-          {score < 30 ? "Low Risk" : score < 60 ? "Moderate Risk" : "High Risk"}
+          Risk Score (0–100) — {scoreLabel}
         </p>
       </div>
 
@@ -181,15 +249,7 @@ export default function ReportPage() {
                               <p className="text-xs text-zinc-500">{h.note}</p>
                             )}
                           </div>
-                          <Badge
-                            className={
-                              h.severity === "high"
-                                ? "bg-red-900 text-red-200"
-                                : h.severity === "medium"
-                                  ? "bg-yellow-900 text-yellow-200"
-                                  : "bg-green-900 text-green-200"
-                            }
-                          >
+                          <Badge className={SEVERITY_BADGE[h.severity]}>
                             {h.severity}
                           </Badge>
                         </div>
@@ -207,35 +267,31 @@ export default function ReportPage() {
       <h2 className="mb-4 mt-8 text-lg font-semibold">
         Prioritized Recommendations
       </h2>
-      <div className="space-y-2">
-        {sortedHazards.map((h, i) => {
-          const item = getHazardItemById(h.hazardItemId);
-          return (
-            <div key={h._id} className="flex items-start gap-3 text-sm">
-              <span className="mt-0.5 text-zinc-500">{i + 1}.</span>
-              <div>
-                <p className="font-medium">
-                  {item?.label ?? h.hazardItemId.replace(/_/g, " ")}
-                  <Badge
-                    className={`ml-2 ${
-                      h.severity === "high"
-                        ? "bg-red-900 text-red-200"
-                        : h.severity === "medium"
-                          ? "bg-yellow-900 text-yellow-200"
-                          : "bg-green-900 text-green-200"
-                    }`}
-                  >
-                    {h.severity}
-                  </Badge>
-                </p>
-                <p className="text-xs text-zinc-400">
-                  {item?.description ?? ""}
-                </p>
+      {sortedHazards.length === 0 ? (
+        <p className="text-sm text-zinc-500">No hazards recorded — the home appears safe.</p>
+      ) : (
+        <div className="space-y-2">
+          {sortedHazards.map((h, i) => {
+            const item = getHazardItemById(h.hazardItemId);
+            return (
+              <div key={h._id} className="flex items-start gap-3 text-sm">
+                <span className="mt-0.5 text-zinc-500">{i + 1}.</span>
+                <div>
+                  <p className="font-medium">
+                    {item?.label ?? h.hazardItemId.replace(/_/g, " ")}
+                    <Badge className={`ml-2 ${SEVERITY_BADGE[h.severity]}`}>
+                      {h.severity}
+                    </Badge>
+                  </p>
+                  <p className="text-xs text-zinc-400">
+                    {item?.description ?? ""}
+                  </p>
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
