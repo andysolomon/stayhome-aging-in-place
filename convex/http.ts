@@ -63,14 +63,58 @@ http.route({
   }),
 });
 
+// Stripe webhook signature verification using Web Crypto API
+async function verifyStripeSignature(
+  payload: string,
+  sigHeader: string,
+  secret: string,
+  toleranceSec = 300
+): Promise<boolean> {
+  const parts = sigHeader.split(",");
+  const timestamp = parts.find((p) => p.startsWith("t="))?.slice(2);
+  const signature = parts.find((p) => p.startsWith("v1="))?.slice(3);
+  if (!timestamp || !signature) return false;
+
+  const age = Math.floor(Date.now() / 1000) - parseInt(timestamp, 10);
+  if (isNaN(age) || Math.abs(age) > toleranceSec) return false;
+
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const expected = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    new TextEncoder().encode(`${timestamp}.${payload}`)
+  );
+  const expectedHex = Array.from(new Uint8Array(expected))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  return expectedHex === signature;
+}
+
 // Stripe webhook
 http.route({
   path: "/stripe/webhook",
   method: "POST",
   handler: httpAction(async (ctx, req) => {
     const body = await req.text();
-    // Note: In production, verify the Stripe signature here using STRIPE_WEBHOOK_SECRET
-    // For MVP, we trust the payload
+
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (webhookSecret) {
+      const sig = req.headers.get("stripe-signature");
+      if (!sig) {
+        return new Response("Missing stripe-signature header", { status: 400 });
+      }
+      const valid = await verifyStripeSignature(body, sig, webhookSecret);
+      if (!valid) {
+        return new Response("Invalid signature", { status: 400 });
+      }
+    }
 
     let event;
     try {
@@ -87,11 +131,9 @@ http.route({
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       if (session.mode === "subscription" && session.customer) {
-        // Fetch subscription details from the session
-        const plan = "monitoring"; // Default, will be updated by subscription.updated
         await ctx.runMutation(api.subscriptions.updateFromStripe, {
           stripeCustomerId: session.customer,
-          plan,
+          plan: "monitoring",
           status: "active",
           stripeSubscriptionId: session.subscription,
         });
