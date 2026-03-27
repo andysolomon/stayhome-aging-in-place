@@ -28,7 +28,7 @@ Set in Convex Dashboard → Settings → Environment Variables:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `CLERK_JWT_ISSUER_DOMAIN` | Yes | Clerk issuer URL (e.g., `https://xxx.clerk.accounts.dev`) |
+| `CLERK_JWT_ISSUER_DOMAIN` | Yes | Clerk issuer URL for the `convex` JWT template (use the default `https://xxx.clerk.accounts.dev` issuer until any custom Clerk domain is fully verified) |
 | `OPENAI_API_KEY` | Yes | OpenAI API key for photo analysis |
 | `STRIPE_SECRET_KEY` | Yes | Stripe secret key |
 | `STRIPE_WEBHOOK_SECRET` | No | Stripe webhook signing secret (for production) |
@@ -58,7 +58,9 @@ vercel --prod
 1. Create Clerk application at clerk.com
 2. Enable email/password + Google OAuth
 3. Create JWT Template → select "Convex"
-4. Copy issuer URL → add to Convex env vars as `CLERK_JWT_ISSUER_DOMAIN`
+4. Confirm the template slug is `convex`
+5. Copy the issuer URL from that template → add it to Convex env vars as `CLERK_JWT_ISSUER_DOMAIN`
+6. If using Clerk custom domains, do not point Convex at the custom issuer until Clerk shows the DNS config as verified
 
 ### 4. Configure Stripe
 
@@ -95,7 +97,8 @@ Convex doesn't have built-in rollback. To revert:
 
 - [ ] All Vercel env vars set (CONVEX_URL, CLERK keys, sign-in URLs)
 - [ ] All Convex env vars set (CLERK_JWT_ISSUER_DOMAIN, OPENAI_API_KEY, STRIPE_SECRET_KEY)
-- [ ] Clerk JWT template created for Convex
+- [ ] Clerk JWT template created with slug `convex`
+- [ ] `CLERK_JWT_ISSUER_DOMAIN` matches that template's issuer URL
 - [ ] Clerk Google OAuth configured
 - [ ] Stripe products and prices created
 - [ ] Stripe webhook endpoint registered
